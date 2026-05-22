@@ -39,6 +39,11 @@ jobs:
         run: |
           echo "Building BCP mobile banking transfer limit service..."
           python -m py_compile app/transfer_limit.py
+      
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
     
       - name: Run unit tests
         run: python -m pytest -v
