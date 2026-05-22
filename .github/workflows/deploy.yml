@@ -31,5 +31,17 @@ jobs:
       - name: Simulated deployment to staging
         run: echo "Deploying temporary transfer limit feature to staging..."
 
+      - name: ServiceNow DevOps Change Automation
+        uses: ServiceNow/servicenow-devops-change@v6.0.0
+        with:
+          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
+          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+          context-github: ${{ toJSON(github) }}
+          job-name: 'build-test-deploy'
+          change-request: '{"setCloseCode":"true","attributes":{"short_description":"BCP Mobile Banking deployment from GitHub Actions","description":"Automated DevOps change created from GitHub Actions for BCP demo pipeline.","assignment_group":"Change Management"}}'
+          interval: '100'
+          timeout: '3600'
+
       - name: Simulated production deployment
         run: echo "Deploying release to production..."
