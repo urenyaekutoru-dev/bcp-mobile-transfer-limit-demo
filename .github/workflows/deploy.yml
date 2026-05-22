@@ -22,24 +22,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
+      - name: Validate Jira work item context
+        run: |
+          echo "Jira issue: ${{ github.event.inputs.jira_issue }}"
+          echo "Validating work item traceability..."
+    
       - name: Checkout repository
         uses: actions/checkout@v5
-
+    
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
+    
+      - name: Build application
+        run: |
+          echo "Building BCP mobile banking transfer limit service..."
+          python -m py_compile app/transfer_limit.py
+    
       - name: Run unit tests
         run: python -m pytest -v
-
-      - name: Simulated build
-        run: echo "Building BCP mobile banking package..."
-
+    
+      - name: Run security scan
+        run: |
+          echo "Running simulated SAST and dependency scan..."
+          echo "No critical vulnerabilities found."
+    
+      - name: Package release artifact
+        run: |
+          mkdir -p dist
+          echo "bcp-mobile-transfer-limit-${{ github.run_number }}" > dist/release-artifact.txt
+          echo "Artifact packaged successfully."
+    
       - name: Create ServiceNow DevOps Change
         uses: ServiceNow/servicenow-devops-change@v6.0.0
         with:
@@ -48,7 +62,6 @@ jobs:
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
           job-name: 'build-test-deploy'
-
           change-request: >
             {
               "attributes": {
@@ -63,12 +76,27 @@ jobs:
                 "test_plan": "Execute automated pytest validation and post-deployment smoke tests."
               }
             }
-
           interval: '100'
           timeout: '3600'
-
-      - name: Simulated deployment
-        run: echo "Deploying release to ${{ github.event.inputs.environment }}..."
-
+    
+      - name: Deploy to staging
+        run: echo "Deploying release to staging..."
+    
+      - name: Run smoke tests
+        run: |
+          echo "Testing health endpoint..."
+          echo "Testing transfer limit validation..."
+          echo "Smoke tests passed."
+    
+      - name: Simulated release approval gate
+        run: |
+          echo "Validating change approval and release readiness..."
+          echo "Release gate passed."
+    
+      - name: Deploy to production
+        run: echo "Deploying release to production..."
+    
       - name: Post-deployment validation
-        run: echo "Validating mobile transfer limit service..."
+        run: |
+          echo "Validating production service..."
+          echo "Deployment completed successfully."
