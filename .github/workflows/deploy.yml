@@ -54,6 +54,7 @@ jobs:
               "attributes": {
                 "short_description": "BCP Mobile Banking deployment",
                 "description": "Automated deployment for temporary transfer limit feature.",
+                "chg_model": "5c05c754433a02104a6e556d58b8f278",
                 "assignment_group": "0a52d3dcd7011200f2d224837e6103f2",
                 "business_service": "3c59afd993c11e10dfacb4c86cba1094",
                 "cmdb_ci": "ad69ff288760c2d4a84043b7dabb35fb",
