@@ -1,16 +1,28 @@
 name: BCP Demo Pipeline
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+      jira_issue:
+        description: 'Jira Issue Key'
+        required: true
+        default: 'BCP-1'
 
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v5
 
@@ -28,10 +40,7 @@ jobs:
       - name: Simulated build
         run: echo "Building BCP mobile banking package..."
 
-      - name: Simulated deployment to staging
-        run: echo "Deploying temporary transfer limit feature to staging..."
-
-      - name: ServiceNow DevOps Change Automation
+      - name: Create ServiceNow DevOps Change
         uses: ServiceNow/servicenow-devops-change@v6.0.0
         with:
           devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
@@ -39,9 +48,21 @@ jobs:
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
           job-name: 'build-test-deploy'
-          change-request: '{"setCloseCode":"true","attributes":{"short_description":"BCP Mobile Banking deployment from GitHub Actions","description":"Automated DevOps change created from GitHub Actions for BCP demo pipeline.","assignment_group":"Change Management"}}'
+
+          change-request: >
+            {
+              "attributes": {
+                "short_description": "BCP Mobile Banking deployment",
+                "description": "Automated deployment for temporary transfer limit feature.",
+                "assignment_group": "Change Management"
+              }
+            }
+
           interval: '100'
           timeout: '3600'
 
-      - name: Simulated production deployment
-        run: echo "Deploying release to production..."
+      - name: Simulated deployment
+        run: echo "Deploying release to ${{ github.event.inputs.environment }}..."
+
+      - name: Post-deployment validation
+        run: echo "Validating mobile transfer limit service..."
