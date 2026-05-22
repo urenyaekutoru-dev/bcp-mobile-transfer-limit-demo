@@ -54,7 +54,12 @@ jobs:
               "attributes": {
                 "short_description": "BCP Mobile Banking deployment",
                 "description": "Automated deployment for temporary transfer limit feature.",
-                "assignment_group": "Change Management"
+                "assignment_group": "Application Development",
+                "business_service": "Online Shopping",
+                "cmdb_ci": "cartservice/ecommerce/CloudObs",
+                "implementation_plan": "Deploy update using GitHub Actions pipeline and validate transfer limit services.",
+                "backout_plan": "Rollback previous application version if deployment validation fails.",
+                "test_plan": "Execute automated pytest validation and post-deployment smoke tests."
               }
             }
 
